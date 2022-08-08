@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+
+  db:
+    init: true
+    restart: always
+    image: mysql:latest
+    env_file:
+      - envs/db/.env
+  wordpress:
+    init: true
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: usagi_soup
+      WORDPRESS_DB_USER: usagi_lover
+      WORDPRESS_DB_PASSWORD: usagi
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      PHP_IDE_CONFIG: serverName=docker
+    volumes:
+      - ./src:/var/www/html
